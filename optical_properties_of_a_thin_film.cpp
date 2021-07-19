@@ -2,8 +2,9 @@
 #include <cmath>
 #include <vector>
 #include <numeric>
-
+#define _USE_MATH_DEFINES
 using namespace std;
+
 const int N = 13;
 void indice_s (vector<double> Tsustrato, vector<double> & s);
 void indice_n1 (vector<double> TM, vector<double> Tm, vector<double> s, vector<double> & n);
@@ -16,11 +17,12 @@ void indice_n2 (vector<double> d2, vector<int> lambda, vector<double> m, vector<
 void x_TM (vector<double> s, vector<double> n2, vector<double> TM, vector<double> & xTM);
 void x_Tm (vector<double> s, vector<double> n2, vector<double> Tm, vector<double> & xTm);
 void alpha (vector<double> d2, vector<double> x, vector<double> & alfa);
-  
+void extincion (vector<double> alfa, vector<int> lambda, vector<double> & k);
+
 int main()
 {
   std::cout.precision(5);
-  //std::cout.setf(std::ios::scientific);
+  std::cout.setf(std::ios::scientific);
  
   vector<int> lambda = {571, 588, 611, 633, 660, 690, 723, 761, 804, 853, 910, 975, 1055};
   
@@ -42,6 +44,8 @@ int main()
   vector<double> xTm (N, 0.0);
   vector<double> alfxTM (N, 0.0);
   vector<double> alfxTm (N, 0.0);
+  vector<double> kTM (N, 0.0);
+  vector<double> kTm (N, 0.0);
   
   indice_s (Tsustrato, s);
   indice_n1 (TM, Tm, s, n1);
@@ -54,12 +58,17 @@ int main()
   x_Tm (s, n2, Tm, xTm);
   alpha (d2, xTM, alfxTM);
   alpha (d2, xTm, alfxTm);
+  extincion (alfxTM, lambda, kTM);
+  extincion (alfxTm, lambda, kTm);
   
-  cout<<"lambda"<<"\t"<<"Trans"<<"\t"<<"TM"<<"\t"<<"Tm"<<"\t"<<"Ts"<<"\t"<<"s"<<"\t"<<"n1"<<"\t"<<"d1"<<"\t"<<"m"<<"\t"<<"d2"<<"\t"<<"n2"<<"\t"<<"xTM"<<"\t"<<"xTm"<<"\t"<<"alfTM"<<"\t"<<"alfTm"<<endl;
+  //cout<<"lambda"<<"\t"<<"Trans"<<"\t"<<"TM"<<"\t"<<"Tm"<<"\t"<<"Ts"<<"\t"<<"s"<<"\t"<<"n1"<<"\t"<<"d1"<<"\t"<<"m"<<"\t"<<"d2"<<"\t"<<"n2"<<"\t"<<"xTM"<<"\t"<<"xTm"<<"\t"<<"alfTM"<<"\t"<<"alfTm"<<"\t"<<"kTM"<<"\t"<<"kTM"<<endl;
+
+  cout<<"lambda"<<"m"<<"\t"<<"d2"<<"\t"<<"n2"<<"\t"<<"xTM"<<"\t"<<"xTm"<<"\t"<<"alfTM"<<"\t"<<"alfTm"<<"\t"<<"kTM"<<"\t"<<"kTm"<<endl;
   
   for (int ii=0; ii<N; ii++)
     {
-      cout<<lambda[ii]<<"\t"<<Transmitancia[ii]<<"\t"<<TM[ii]<<"\t"<<Tm[ii]<<"\t"<<Tsustrato[ii]<<"\t"<<s[ii]<<"\t"<<n1[ii]<<"\t"<<d1[ii]<<"\t"<<m[ii]<<"\t"<<d2[ii]<<"\t"<<n2[ii]<<"\t"<<xTM[ii]<<"\t"<<xTm[ii]<<"\t"<<alfxTM[ii]<<"\t"<<alfxTm[ii]<<endl;
+      // cout<<lambda[ii]<<"\t"<<Transmitancia[ii]<<"\t"<<TM[ii]<<"\t"<<Tm[ii]<<"\t"<<Tsustrato[ii]<<"\t"<<s[ii]<<"\t"<<n1[ii]<<"\t"<<d1[ii]<<"\t"<<m[ii]<<"\t"<<d2[ii]<<"\t"<<n2[ii]<<"\t"<<xTM[ii]<<"\t"<<xTm[ii]<<"\t"<<alfxTM[ii]<<"\t"<<alfxTm[ii]<<"\t"<<kTM[ii]<<"\t"<<kTm[ii]<<endl;
+      cout<<lambda[ii]<<"  "<<m[ii]<<"  "<<d2[ii]<<"  "<<n2[ii]<<"  "<<xTM[ii]<<"  "<<xTm[ii]<<"  "<<alfxTM[ii]<<"  "<<alfxTm[ii]<<"  "<<kTM[ii]<<"  "<<kTm[ii]<<endl;
     }
 
   cout<<"mean d2: "<<d2[N]<<"\t"<<"std dev d2: "<<d2[N+1]<<endl;
@@ -200,6 +209,14 @@ void alpha (vector<double> d2, vector<double> x, vector<double> & alfa)
 
   for (int ii=0; ii<N; ii++)
     {
-      alfa[ii] = -log(x[ii])/d;
+      alfa[ii] = -(log(x[ii])/d)*pow(10, 7);
+    }
+}
+
+void extincion (vector<double> alfa, vector<int> lambda, vector<double> & k)
+{
+  for (int ii=0; ii<N; ii++)
+    {
+      k[ii] = (lambda[ii]*alfa[ii])/(4*M_PI);
     }
 }
