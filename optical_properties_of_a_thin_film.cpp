@@ -18,7 +18,7 @@ void Ti_Talf (vector<double> TM, vector<double> Tm, vector<double> & Ti, vector<
 void funcion_x (vector<double> s, vector<double> n2, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> & xTM, vector<double> & xTm, vector<double> & xTi, vector<double> & xTalfa);
 void alpha (vector<double> d2, vector<double> xTM, vector<double> xTm, vector<double> xTi, vector<double> xTalfa, vector<double> & alfaTM, vector<double> & alfaTm, vector<double> & alfaTi, vector<double> & alfaTalfa);
 void extincion_k (vector<int> lambda, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa, vector<double> & kTM, vector<double> & kTm, vector<double> & kTi, vector<double> & kTalfa);
-void print (vector<int> lambda, vector<double> Trasmitancia, vector<double> Ts, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> n1, vector<double> n2, vector<double> d1, vector<double> d2, vector<double> m, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa);
+void print (vector<int> lambda, vector<double> Trasmitancia, vector<double> Ts, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> n1, vector<double> n2, vector<double> d1, vector<double> d2, vector<double> m, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa, vector<double> kTM, vector<double> kTm, vector<double> kTi, vector<double> kTalfa);
 
 int main()
 {
@@ -68,7 +68,7 @@ int main()
   alpha (d2, xTM, xTm, xTi, xTalfa, alfxTM, alfxTm, alfxTi, alfxTalfa);
   extincion_k (lambda, alfxTM, alfxTm, alfxTi, alfxTalfa, kTM, kTm, kTi, kTalfa);
   
-  print (lambda, Transmitancia, Tsustrato, TM, Tm, Ti, Talfa, n1, n2, d1, d2, m, alfxTM, alfxTm, alfxTi, alfxTalfa);
+  print (lambda, Transmitancia, Tsustrato, TM, Tm, Ti, Talfa, n1, n2, d1, d2, m, alfxTM, alfxTm, alfxTi, alfxTalfa, kTM, kTm, kTi, kTalfa);
   
   return 0;
 }
@@ -228,10 +228,10 @@ void alpha (vector<double> d2, vector<double> xTM, vector<double> xTm, vector<do
 
   for (int ii=0; ii<N; ii++)
     {
-      alfaTM[ii] = -(log(xTM[ii])/d)*pow(10, 7);
-      alfaTm[ii] = -(log(xTm[ii])/d)*pow(10, 7);
-      alfaTi[ii] = -(log(xTi[ii])/d)*pow(10, 7);
-      alfaTalfa[ii] = -(log(xTalfa[ii])/d)*pow(10, 7);
+      alfaTM[ii] = -(log(xTM[ii])/d)*pow(10, 4); //nm^(-1)*10^(7)cm^(-1)/nm^(-1)= 10^4*10^3cm^(-1)------> unidades 10^3cm^(-1)
+      alfaTm[ii] = -(log(xTm[ii])/d)*pow(10, 4);
+      alfaTi[ii] = -(log(xTi[ii])/d)*pow(10, 4);
+      alfaTalfa[ii] = -(log(xTalfa[ii])/d)*pow(10, 4);
     }
 
   
@@ -241,23 +241,23 @@ void extincion_k (vector<int> lambda, vector<double> alfxTM, vector<double> alfx
 {
   for (int ii=0; ii<N; ii++)
     {
-      kTM[ii] = (lambda[ii]*alfxTM[ii])/(4*M_PI);
-      kTm[ii] = (lambda[ii]*alfxTm[ii])/(4*M_PI);
-      kTi[ii] = (lambda[ii]*alfxTi[ii])/(4*M_PI);
-      kTalfa[ii] = (lambda[ii]*alfxTalfa[ii])/(4*M_PI);
+      kTM[ii] = ((lambda[ii]*pow(10, -7))*alfxTM[ii])/(4*M_PI); //longitud de onda en cm
+      kTm[ii] = ((lambda[ii]*pow(10, -7))*alfxTm[ii])/(4*M_PI);
+      kTi[ii] = ((lambda[ii]*pow(10, -7))*alfxTi[ii])/(4*M_PI);
+      kTalfa[ii] = ((lambda[ii]*pow(10, -7))*alfxTalfa[ii])/(4*M_PI);
     }
 }
 
-void print (vector<int> lambda, vector<double> Trasmitancia, vector<double> Ts, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> n1, vector<double> n2, vector<double> d1, vector<double> d2, vector<double> m, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa)
+void print (vector<int> lambda, vector<double> Trasmitancia, vector<double> Ts, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> n1, vector<double> n2, vector<double> d1, vector<double> d2, vector<double> m, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa, vector<double> kTM, vector<double> kTm, vector<double> kTi, vector<double> kTalfa)
 {
-  cout<<"lambda"<<"\t"<<"Trans"<<"\t"<<"Ts"<<"\t"<<"TM"<<"\t"<<"Tm"<<"\t"<<"Ti"<<"\t"<<"Talfa"<<endl;
+  cout<<"lambda"<<"\t"<<"\t"<<"Trans"<<"\t"<<"\t"<<"Ts"<<"\t"<<"\t"<<"TM"<<"\t"<<"\t"<<"Tm"<<"\t"<<"\t"<<"Ti"<<"\t"<<"\t"<<"Talfa"<<endl;
   
   for (int ii=0; ii<N; ii++)
     {
       cout<<lambda[ii]<<"\t"<<Trasmitancia[ii]<<"\t"<<Ts[ii]<<"\t"<<TM[ii]<<"\t"<<Tm[ii]<<"\t"<<Ti[ii]<<"\t"<<Talfa[ii]<<endl;
     }
   
-  cout<<"lambda"<<"\t"<<"TM"<<"\t"<<"Tm"<<"\t"<<"n1"<<"\t"<<"d1"<<"\t"<<"m"<<"\t"<<"d2"<<"\t"<<"n2"<<endl;
+  cout<<"lambda"<<"\t"<<"\t"<<"TM"<<"\t"<<"\t"<<"Tm"<<"\t"<<"\t"<<"n1"<<"\t"<<"\t"<<"d1"<<"\t"<<"\t"<<"m"<<"\t"<<"\t"<<"d2"<<"\t"<<"\t"<<"n2"<<endl;
   
   for (int ii=0; ii<N; ii++)
     {
@@ -266,10 +266,10 @@ void print (vector<int> lambda, vector<double> Trasmitancia, vector<double> Ts, 
   
   cout<<"mean d2: "<<d2[N]<<"\t"<<"std dev d2: "<<d2[N+1]<<endl;
 
-  cout<<"lambda"<<"\t"<<"alfa_TM"<<"\t"<<"alfa_Tm"<<"\t"<<"alfa_Ti"<<"\t"<<"alfa_Talfa"<<endl;
+  cout<<"lambda"<<"\t"<<"alfa_TM"<<"\t"<<"\t"<<"alfa_Tm"<<"\t"<<"\t"<<"alfa_Ti"<<"\t"<<"\t"<<"alfa_Talfa"<<"\t"<<"kTM"<<"\t"<<"\t"<<"kTm"<<"\t"<<"\t"<<"kTi"<<"\t"<<"\t"<<"kTalfa"<<endl;
 
   for (int ii=0; ii<N; ii++)
     {
-      cout<<lambda[ii]<<"\t"<<alfxTM[ii]<<"\t"<<alfxTm[ii]<<"\t"<<alfxTi[ii]<<"\t"<<alfxTalfa[ii]<<endl;
+      cout<<lambda[ii]<<"\t"<<alfxTM[ii]<<"\t"<<alfxTm[ii]<<"\t"<<alfxTi[ii]<<"\t"<<alfxTalfa[ii]<<"\t"<<kTM[ii]<<"\t"<<kTm[ii]<<"\t"<<kTi[ii]<<"\t"<<kTalfa[ii]<<endl;
     }
 }
