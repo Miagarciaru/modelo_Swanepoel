@@ -14,10 +14,11 @@ void number_m (vector<double> n, vector<int> lambda, vector<double> d1, vector<d
 void grosor2 (vector<double> n1, vector<int> lambda, vector<double> m, vector<double> & d2);
 void stand_deviation2 (vector<double> & data);
 void indice_n2 (vector<double> d2, vector<int> lambda, vector<double> m, vector<double> & n2);
-void x_TM (vector<double> s, vector<double> n2, vector<double> TM, vector<double> & xTM);
-void x_Tm (vector<double> s, vector<double> n2, vector<double> Tm, vector<double> & xTm);
-void alpha (vector<double> d2, vector<double> x, vector<double> & alfa);
-void extincion (vector<double> alfa, vector<int> lambda, vector<double> & k);
+void Ti_Talf (vector<double> TM, vector<double> Tm, vector<double> & Ti, vector<double> & Talfa);
+void funcion_x (vector<double> s, vector<double> n2, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> & xTM, vector<double> & xTm, vector<double> & xTi, vector<double> & xTalfa);
+void alpha (vector<double> d2, vector<double> xTM, vector<double> xTm, vector<double> xTi, vector<double> xTalfa, vector<double> & alfaTM, vector<double> & alfaTm, vector<double> & alfaTi, vector<double> & alfaTalfa);
+void extincion_k (vector<int> lambda, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa, vector<double> & kTM, vector<double> & kTm, vector<double> & kTi, vector<double> & kTalfa);
+void print (vector<int> lambda, vector<double> Trasmitancia, vector<double> Ts, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> n1, vector<double> n2, vector<double> d1, vector<double> d2, vector<double> m, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa);
 
 int main()
 {
@@ -40,38 +41,34 @@ int main()
   vector<double> m (N, 0.0);
   vector<double> d2 (N+2, 0.0);
   vector<double> n2 (N, 0.0);
+  vector<double> Ti (N, 0.0);
+  vector<double> Talfa (N, 0.0);
   vector<double> xTM (N, 0.0);
   vector<double> xTm (N, 0.0);
+  vector<double> xTi (N, 0.0);
+  vector<double> xTalfa (N, 0.0);
   vector<double> alfxTM (N, 0.0);
   vector<double> alfxTm (N, 0.0);
+  vector<double> alfxTi (N, 0.0);
+  vector<double> alfxTalfa (N, 0.0);
   vector<double> kTM (N, 0.0);
   vector<double> kTm (N, 0.0);
+  vector<double> kTi (N, 0.0);
+  vector<double> kTalfa (N, 0.0);
   
   indice_s (Tsustrato, s);
   indice_n1 (TM, Tm, s, n1);
+  Ti_Talf (TM, Tm, Ti, Talfa);
   grosor1 (lambda, n1, d1);
   number_m (n1, lambda, d1, m);
   m = {12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6};
   grosor2 (n1, lambda, m, d2);
   indice_n2 (d2, lambda, m, n2);
-  x_TM (s, n2, TM, xTM);
-  x_Tm (s, n2, Tm, xTm);
-  alpha (d2, xTM, alfxTM);
-  alpha (d2, xTm, alfxTm);
-  extincion (alfxTM, lambda, kTM);
-  extincion (alfxTm, lambda, kTm);
+  funcion_x (s, n2, TM, Tm, Ti, Talfa, xTM, xTm, xTi, xTalfa);
+  alpha (d2, xTM, xTm, xTi, xTalfa, alfxTM, alfxTm, alfxTi, alfxTalfa);
+  extincion_k (lambda, alfxTM, alfxTm, alfxTi, alfxTalfa, kTM, kTm, kTi, kTalfa);
   
-  //cout<<"lambda"<<"\t"<<"Trans"<<"\t"<<"TM"<<"\t"<<"Tm"<<"\t"<<"Ts"<<"\t"<<"s"<<"\t"<<"n1"<<"\t"<<"d1"<<"\t"<<"m"<<"\t"<<"d2"<<"\t"<<"n2"<<"\t"<<"xTM"<<"\t"<<"xTm"<<"\t"<<"alfTM"<<"\t"<<"alfTm"<<"\t"<<"kTM"<<"\t"<<"kTM"<<endl;
-
-  cout<<"lambda"<<"m"<<"\t"<<"d2"<<"\t"<<"n2"<<"\t"<<"xTM"<<"\t"<<"xTm"<<"\t"<<"alfTM"<<"\t"<<"alfTm"<<"\t"<<"kTM"<<"\t"<<"kTm"<<endl;
-  
-  for (int ii=0; ii<N; ii++)
-    {
-      // cout<<lambda[ii]<<"\t"<<Transmitancia[ii]<<"\t"<<TM[ii]<<"\t"<<Tm[ii]<<"\t"<<Tsustrato[ii]<<"\t"<<s[ii]<<"\t"<<n1[ii]<<"\t"<<d1[ii]<<"\t"<<m[ii]<<"\t"<<d2[ii]<<"\t"<<n2[ii]<<"\t"<<xTM[ii]<<"\t"<<xTm[ii]<<"\t"<<alfxTM[ii]<<"\t"<<alfxTm[ii]<<"\t"<<kTM[ii]<<"\t"<<kTm[ii]<<endl;
-      cout<<lambda[ii]<<"  "<<m[ii]<<"  "<<d2[ii]<<"  "<<n2[ii]<<"  "<<xTM[ii]<<"  "<<xTm[ii]<<"  "<<alfxTM[ii]<<"  "<<alfxTm[ii]<<"  "<<kTM[ii]<<"  "<<kTm[ii]<<endl;
-    }
-
-  cout<<"mean d2: "<<d2[N]<<"\t"<<"std dev d2: "<<d2[N+1]<<endl;
+  print (lambda, Transmitancia, Tsustrato, TM, Tm, Ti, Talfa, n1, n2, d1, d2, m, alfxTM, alfxTm, alfxTi, alfxTalfa);
   
   return 0;
 }
@@ -183,7 +180,20 @@ void indice_n2 (vector<double> d2, vector<int> lambda, vector<double> m, vector<
     }
 }
 
-void x_TM (vector<double> s, vector<double> n2, vector<double> TM, vector<double> & xTM)
+void Ti_Talf (vector<double> TM, vector<double> Tm, vector<double> & Ti, vector<double> & Talfa)
+{
+  for (int ii=0; ii<N; ii++)
+    {
+      Ti[ii] = (2*TM[ii]*Tm[ii])/(TM[ii]+Tm[ii]);
+    }
+
+  for (int jj=0; jj<N; jj++)
+    {
+      Talfa[jj] = sqrt(TM[jj]*Tm[jj]);
+    }
+}
+
+void funcion_x (vector<double> s, vector<double> n2, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> & xTM, vector<double> & xTm, vector<double> & xTi, vector<double> & xTalfa)
 {
   for (int ii=0; ii<N; ii++)
     {
@@ -191,32 +201,75 @@ void x_TM (vector<double> s, vector<double> n2, vector<double> TM, vector<double
       xTM[ii] = (EM-sqrt(EM*EM-pow(n*n-1, 3)*(n*n-pow(s_ind, 4))))/(pow(n-1, 3)*(n-s_ind*s_ind));
       //xTM[ii] = EM;
     }
-}
 
-void x_Tm (vector<double> s, vector<double> n2, vector<double> Tm, vector<double> & xTm)
-{
   for (int ii=0; ii<N; ii++)
     {
       double T_m = Tm[ii], n= n2[ii], s_ind = s[ii], Em = (8*n*n*s_ind)/(T_m)-(n*n-1)*(n*n-s_ind*s_ind);
       xTm[ii] = (Em-sqrt(Em*Em-pow(n*n-1, 3)*(n*n-pow(s_ind, 4))))/(pow(n-1, 3)*(n-s_ind*s_ind));
       //xTm[ii] = Em;
     }
+
+  for (int ii=0; ii<N; ii++)
+    {
+      double T_i = Ti[ii], n= n2[ii], s_ind = s[ii], F = (8*n*n*s_ind)/(T_i);
+      xTi[ii] = (F-sqrt(F*F-pow(n*n-1, 3)*(n*n-pow(s_ind, 4))))/(pow(n-1, 3)*(n-s_ind*s_ind));
+    }
+  
+  for (int ii=0; ii<N; ii++)
+    {
+      double T_alfa = Talfa[ii], n= n2[ii], s_ind = s[ii], G = (128*pow(n, 4)*s_ind*s_ind)/(T_alfa*T_alfa)+n*n*pow(n*n-1, 2)*pow(s_ind*s_ind-1, 2)+pow(n*n-1, 2)*pow(n*n-s_ind*s_ind, 2);
+      xTalfa[ii] = sqrt(G - sqrt(G*G-pow(n*n-1, 6)*pow(n*n-pow(s_ind, 4), 2)))/(pow(n-1, 3)*(n-s_ind*s_ind));
+    }
 }
 
-void alpha (vector<double> d2, vector<double> x, vector<double> & alfa)
+void alpha (vector<double> d2, vector<double> xTM, vector<double> xTm, vector<double> xTi, vector<double> xTalfa, vector<double> & alfaTM, vector<double> & alfaTm, vector<double> & alfaTi, vector<double> & alfaTalfa)
 {
   double d = d2[N];
 
   for (int ii=0; ii<N; ii++)
     {
-      alfa[ii] = -(log(x[ii])/d)*pow(10, 7);
+      alfaTM[ii] = -(log(xTM[ii])/d)*pow(10, 7);
+      alfaTm[ii] = -(log(xTm[ii])/d)*pow(10, 7);
+      alfaTi[ii] = -(log(xTi[ii])/d)*pow(10, 7);
+      alfaTalfa[ii] = -(log(xTalfa[ii])/d)*pow(10, 7);
     }
+
+  
 }
 
-void extincion (vector<double> alfa, vector<int> lambda, vector<double> & k)
+void extincion_k (vector<int> lambda, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa, vector<double> & kTM, vector<double> & kTm, vector<double> & kTi, vector<double> & kTalfa)
 {
   for (int ii=0; ii<N; ii++)
     {
-      k[ii] = (lambda[ii]*alfa[ii])/(4*M_PI);
+      kTM[ii] = (lambda[ii]*alfxTM[ii])/(4*M_PI);
+      kTm[ii] = (lambda[ii]*alfxTm[ii])/(4*M_PI);
+      kTi[ii] = (lambda[ii]*alfxTi[ii])/(4*M_PI);
+      kTalfa[ii] = (lambda[ii]*alfxTalfa[ii])/(4*M_PI);
+    }
+}
+
+void print (vector<int> lambda, vector<double> Trasmitancia, vector<double> Ts, vector<double> TM, vector<double> Tm, vector<double> Ti, vector<double> Talfa, vector<double> n1, vector<double> n2, vector<double> d1, vector<double> d2, vector<double> m, vector<double> alfxTM, vector<double> alfxTm, vector<double> alfxTi, vector<double> alfxTalfa)
+{
+  cout<<"lambda"<<"\t"<<"Trans"<<"\t"<<"Ts"<<"\t"<<"TM"<<"\t"<<"Tm"<<"\t"<<"Ti"<<"\t"<<"Talfa"<<endl;
+  
+  for (int ii=0; ii<N; ii++)
+    {
+      cout<<lambda[ii]<<"\t"<<Trasmitancia[ii]<<"\t"<<Ts[ii]<<"\t"<<TM[ii]<<"\t"<<Tm[ii]<<"\t"<<Ti[ii]<<"\t"<<Talfa[ii]<<endl;
+    }
+  
+  cout<<"lambda"<<"\t"<<"TM"<<"\t"<<"Tm"<<"\t"<<"n1"<<"\t"<<"d1"<<"\t"<<"m"<<"\t"<<"d2"<<"\t"<<"n2"<<endl;
+  
+  for (int ii=0; ii<N; ii++)
+    {
+      cout<<lambda[ii]<<"\t"<<TM[ii]<<"\t"<<Tm[ii]<<"\t"<<n1[ii]<<"\t"<<d1[ii]<<"\t"<<m[ii]<<"\t"<<d2[ii]<<"\t"<<n2[ii]<<endl;
+    }
+  
+  cout<<"mean d2: "<<d2[N]<<"\t"<<"std dev d2: "<<d2[N+1]<<endl;
+
+  cout<<"lambda"<<"\t"<<"alfa_TM"<<"\t"<<"alfa_Tm"<<"\t"<<"alfa_Ti"<<"\t"<<"alfa_Talfa"<<endl;
+
+  for (int ii=0; ii<N; ii++)
+    {
+      cout<<lambda[ii]<<"\t"<<alfxTM[ii]<<"\t"<<alfxTm[ii]<<"\t"<<alfxTi[ii]<<"\t"<<alfxTalfa[ii]<<endl;
     }
 }
